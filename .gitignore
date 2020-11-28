@@ -1,8 +1,9 @@
 # Ignore everything
-*
-!*./asset/*
+frogger/*
 # But not these files...
 !.gitignore
 !.cpp
 !.h
-.md
+!.md
+!.mp3
+!.txt
