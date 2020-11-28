@@ -1,6 +1,6 @@
 ﻿//Các hằng số và biến toàn cục cần thiết
 #include "Header.h"
-
+#include <thread>
 
 char MOVING;
 CGAME *cg;
@@ -13,20 +13,17 @@ void SubThread() {
 	while (IS_EXIT) {
 		++ti;
 		if (!IS_RUNNING) continue;
-		if (!cg->getPeople()->isDead()) //Nếu người vẫn còn sống {
-			cg->updatePosPeople(MOVING,ti);//Cập nhật vị trí người theo thông tin từ main
+		if (!cg->getPeople()->isDead()) // if player si still alive -> update positions
+			cg->updatePosPeople(MOVING,ti);
 
 		if (cg->IsFinish()) {
-			// Xử lý khi về đích
 			cg->ScoreBoard(true);
 			IS_EXIT = false;
 			break;
 		}
 
 
-		MOVING = ' ';// Tạm khóa không cho di chuyển, chờ nhận phím từ hàm main
-		//cg->updatePosVehicle();//Cập nhật vị trí xe
-		//cg->updatePosAnimal(); //Cập nhật vị trí thú
+		MOVING = ' '; // Temp pause, waiting for keys from main
 		if (ti % 300 > STOPTIME - 1) {
 			cg->DrawLight(true);
 			cg->Update();
@@ -36,39 +33,40 @@ void SubThread() {
 		}
 		//Sleep(1);
 		//cg->drawGame();
-		if (cg ->IsImpact()) {
-			 // Xử lý khi đụng xe hay thú
+		if (cg ->IsImpact()) { // crash car or animals
 			cout << "\a";// sound
 			cg->ScoreBoard(false);
 			IS_EXIT = false;
 			break;
 
 		}
-		
+
 		Sleep(100/cg->getSpeed());
 		//Sleep(1000);
 	}
 }
 
-void main() {
+int main() {
 
 	hidecursor();
 	LoadingBar();
 	cg = NULL;
 	char t = '1';
 
-	mciSendString("play gang.mp3 repeat", NULL, 0, NULL);
+	mciSendString(L"play gang.mp3 repeat", NULL, 0, NULL);
 
 	while (t != '4')
 	{
 		clrscr();
-		GotoXY(10, 3); cout << "XXXXXXX      XXXXXX      XX       XXXXX      XXXX  XXXXXX    XXXXXX   XXXXX   XXXXX  X  X     X   XXXXXX";
-		GotoXY(10, 4); cout << "X      X    X      X    X  X      X    X    X      X      X X      X X       X       X  X X   X  X";
-		GotoXY(10, 5); cout << "XXXXXXXX    X      X   X  X X     X    X    X      XXXXXXXX X      X XXXXXX  XXXXXX  X  X  X  X  X    XXX";
-		GotoXY(10, 6); cout << "X      X    X      X  X      X    X   X     X    X X      X X      X      X       X  X  X   X X  X     X";
-		GotoXY(10, 7); cout << "X      X     XXXXXX  X         X  XXXX       XXXXX X      X  XXXXXX  XXXXX   XXXXX   X  X     X   XXXXXX";
+		GotoXY(10, 1); cout << "       XX    XX   XXX  XXX           XXX  XXXXXXXX   XXX";
+		GotoXY(10, 2); cout << "       XX    XX   XXX  XXX           XXX  XX   XXX   XXX";
+		GotoXY(10, 3); cout << "       XX    XX   XXX  XXX           XXX  XX   XXX   XXX";
+		GotoXY(10, 4); cout << "       XX    XX    XX  XXXXX       XXXXX  XXX  XXX   XXX";
+		GotoXY(10, 5); cout << "       XX    XX    XX  XX XXX     XXX XX  XXXXXX        ";
+		GotoXY(10, 6); cout << "XXXXXXXX     XX    XX  XX   XXX  XXX  XX  XXX        XXX";
+		GotoXY(10, 7); cout << "XXXXXXXX     XXXXXXX   XX    XXXXX    XX  XXX        XXX";
 
-		GotoXY(17, 10);  cout << "   1. New Game.";
+		GotoXY(17, 10);  cout << "   1. New  game.";
 		GotoXY(17, 11);  cout << "   2. Load game.";
 		GotoXY(17, 12);  cout << "   3. Settings.";
 		GotoXY(17, 13);  cout << "   4. Quit.";
@@ -113,12 +111,12 @@ void main() {
 					else continue;
 				}
 			}
-		
+
 				int temp;
 				FixConsoleWindow();
 				//Menu();
 				cg->startGame();
-				thread t1(SubThread);
+                thread t1(SubThread);
 				//thread t2(SubThread2);
 
 				while (IS_EXIT) {
@@ -157,14 +155,14 @@ void main() {
 						if (temp == 'Y') cg->startGame();
 						else {
 							cg->exitGame(t1.native_handle());
-							return;
+							return 0;
 						}
 					}
 				}
 				t1.join();
 		}
 			else if (t == '3') {
-					
+
 			GotoXY(17, 15); cout << "1. Sound";
 			GotoXY(17, 16); cout << "2. Tutorial";
 			GotoXY(17, 17);  cout << "3. Choose character.";
@@ -179,16 +177,16 @@ void main() {
 					Sleep(1000);
 					SOUND = !SOUND;
 					if (!SOUND) {
-						mciSendString("pause gang.mp3", NULL, 0, NULL);
+						mciSendString(L"pause gang.mp3", NULL, 0, NULL);
 					}
 					else {
-						mciSendString("play gang.mp3 repeat", NULL, 0, NULL);
+						mciSendString(L"play gang.mp3 repeat", NULL, 0, NULL);
 					}
 				}
 			}
 			else if (key == '2'){
 				GotoXY(17, 17); cout << "Using w,a,s,d keys to move up, left, down, right.";
-				GotoXY(17, 18); cout << "There are 10 rounds for the game. Pass all of them to get a trophy.";
+				GotoXY(17, 18); cout << "There are 10 rounds for the game. Pass all of them to win a trophy.";
 				_getch();
 			}
 			else if (key == '3'){
@@ -201,15 +199,15 @@ void main() {
 					for (int i = 0; i < 3; i++){
 						cin >> tmp[i];
 					}
-				}	
+				}
 				fin.close();
 				t = _getch();
 			}
 			}
 			else if (t == '4') {
-				
+
 					delete cg;
-		}		
+		}
 	}
 }
 

@@ -14,14 +14,6 @@ void GotoXY(int x, int y) {
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 }
 
-/*void Menu() {
-	GotoXY(20, 20);
-	cout << "Crossing Road the Game" << endl;
-	GotoXY(20, 21); cout << "1. Play" << endl;
-	GotoXY(20, 22); cout << "2. Load" << endl;
-	GotoXY(20, 23); cout << "3. Exit" << endl;
-}*/
-
 void hidecursor()
 {
 	HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);

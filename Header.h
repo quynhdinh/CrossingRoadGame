@@ -3,7 +3,6 @@
 #include <Windows.h>
 #include <conio.h>
 #include <math.h>
-#include <thread>
 #include <fstream>
 #include <string>
 #include <map>
@@ -18,54 +17,6 @@ const int STARTLANE = 3;
 const int ENDLANE = WIDTH - 6;
 const int intWIDTH = 118 - WIDTH;
 const int STOPTIME = 41;
-
-/*class CVEHICLE {
-	int mX, mY;
-public:
-	virtual void Move(int, int) = 0;
-	//...
-};
-
-class CTRUCK : public CVEHICLE {
-public:
-	void Move(int, int) {};
-	//...
-};
-
-class CCAR : public CVEHICLE {
-public:
-	void Move(int, int) {};
-	//...
-};
-
-class CANIMAL {
-protected: int mX, mY, Way;
-public:
-	CANIMAL(int, int);
-	void Move(int, int);
-	virtual void Draw(int x, int y) {};
-	bool IsDone();
-
-
-	//virtual void Tell();
-};
-
-class CDINAUSOR : public CANIMAL {
-	
-public:
-	CDINAUSOR(int x, int y) : CANIMAL(x, y) {};
-	void Draw(int x, int y);
-	//...
-};
-
-class CBIRD : public CANIMAL {
-public:
-	CBIRD(int x, int y) : CANIMAL(x, y) {};
-	void Draw(int x, int y);
-	//void Move(int, int);
-	//bool IsDone();
-	//...
-};*/
 
 class CVEHICLE {
 protected:	int mX, mY, Way;
@@ -187,26 +138,26 @@ class CGAME {
 	FileSave *File[10];
 	int numberOfSave;
 public:
-	CGAME(); //Chuẩn bị dữ liệu cho tất cả các đối tượng
-	void drawGame(); //Thực hiện vẽ trò chơi ra màn hình sau khi có dữ liệu
-	~CGAME(); // Hủy tài nguyên đã cấp phát
-	CPEOPLE* getPeople();//Lấy thông tin người
-	CVEHICLE* getVehicle();//Lấy danh sách các xe
-	CANIMAL* getAnimal(); //Lấy danh sách các thú
+	CGAME();
+	void drawGame(); // load UI onces data is ready
+	~CGAME(); // deallocate resources
+	CPEOPLE* getPeople();
+	CVEHICLE* getVehicle();
+	CANIMAL* getAnimal();
 	bool IsImpact();
-	void resetGame(); // Thực hiện thiết lập lại toàn bộ dữ liệu như lúc đầu
-	void exitGame(HANDLE); // Thực hiện thoát Thread
-	void startGame(); // Thực hiện bắt đầu vào trò chơi
-	void loadGame(); // Thực hiện tải lại trò chơi đã lưu
-	void saveGame(); // Thực hiện lưu lại dữ liệu trò chơi
-	void pauseGame(HANDLE); // Tạm dừng Thread
-	void resumeGame(HANDLE); //Quay lai Thread
+	void resetGame();
+	void exitGame(HANDLE);
+	void startGame(); // start a fresh game 
+	void loadGame(); // load saved games
+	void saveGame();
+	void pauseGame(HANDLE); // Pause thread
+	void resumeGame(HANDLE); //Resume thread
 	void updatePosPeople(char,int&); //Thực hiện điều khiển di chuyển của CPEOPLE
-	void updatePosVehicle(); //Thực hiện cho CTRUCK & CCAR di chuyển
-	void updatePosAnimal();//Thực hiện cho CDINAUSOR & CBIRD di chuyển
+	void updatePosVehicle(); //moving CTRUCK and CCAR
+	void updatePosAnimal();// updae the position of animals
 	void UpdateLevel();
 	void LoadLevel(int);
-	void ScoreBoard(bool); //or gameOverScence
+	void ScoreBoard(bool); //show Scoreboard
 	void Clean();
 	bool IsFinish();
 	void Update();

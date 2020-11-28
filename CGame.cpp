@@ -1,4 +1,5 @@
 ﻿#include "Header.h"
+#include <time.h>
 
 CGAME::CGAME() {
 
